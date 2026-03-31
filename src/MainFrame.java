@@ -5,10 +5,8 @@ import java.io.FileNotFoundException;
 
 public class MainFrame extends JFrame {
     private final DrawingPanel drawingPanel;
-    private final JLabel statusLabel;
     private ProjectData projectData = new ProjectData();
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
-    private PlanePoint currentMousePoint = new PlanePoint(0, 0);
 
     public MainFrame() {
         super("Типовой проект: точки, круги и лучший треугольник");
@@ -16,11 +14,8 @@ public class MainFrame extends JFrame {
         setBounds(120, 80, 1100, 750);
         setLayout(new BorderLayout());
         drawingPanel = new DrawingPanel(this, projectData);
-        statusLabel = new JLabel();
         add(drawingPanel, BorderLayout.CENTER);
-        add(statusLabel, BorderLayout.SOUTH);
         setJMenuBar(createMenuBar());
-        refreshStatusText();
         setVisible(true);
     }
 
@@ -142,7 +137,6 @@ public class MainFrame extends JFrame {
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setProjectData(projectData);
         drawingPanel.setSearchResult(searchResult);
-        refreshStatusText();
     }
 
     private void applyProjectData(ProjectData loadedProjectData) {
@@ -150,7 +144,6 @@ public class MainFrame extends JFrame {
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setProjectData(projectData);
         drawingPanel.setSearchResult(searchResult);
-        refreshStatusText();
     }
 
     private void findBestTriangle() {
@@ -160,36 +153,11 @@ public class MainFrame extends JFrame {
         }
         searchResult = TriangleSearcher.findBestTriangle(projectData);
         drawingPanel.setSearchResult(searchResult);
-        refreshStatusText();
     }
 
     public void notifyAboutDataChange() {
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setSearchResult(searchResult);
-        refreshStatusText();
-    }
-
-    public void updateMousePoint(PlanePoint mousePoint) {
-        currentMousePoint = mousePoint;
-        refreshStatusText();
-    }
-
-    private void refreshStatusText() {
-        statusLabel.setText(buildStatusText());
-    }
-
-    private String buildStatusText() {
-        String mouseText = String.format("Курсор: %s | Точек: %d | Кругов: %d",
-                currentMousePoint, projectData.getPointCount(), projectData.getCircleCount());
-        if (!searchResult.hasTriangle()) {
-            return mouseText + " | Результат: треугольник еще не найден";
-        }
-        TriangleData triangleData = searchResult.getTriangleData();
-        return mouseText + " | Снаружи кругов: " + searchResult.getOutsideCircleCount()
-                + " | Периметр: " + String.format("%.2f", searchResult.getPerimeterValue())
-                + " | A=" + triangleData.getFirstVertex()
-                + ", B=" + triangleData.getSecondVertex()
-                + ", C=" + triangleData.getThirdVertex();
     }
 
     private void showErrorMessage(String messageText) {

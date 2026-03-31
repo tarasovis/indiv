@@ -51,6 +51,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         drawTriangleResult(graphics2D);
         drawPreviewCircle(graphics2D);
         drawStoredPoints(graphics2D);
+        drawSearchInfo(graphics2D);
         graphics2D.dispose();
     }
 
@@ -139,11 +140,19 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         }
     }
 
+    private void drawSearchInfo(Graphics2D graphics2D) {
+        if (!searchResult.hasTriangle()) {
+            return;
+        }
+        graphics2D.setColor(Color.BLACK);
+        graphics2D.drawString("Периметр: " + String.format("%.2f", searchResult.getPerimeterValue()), 10, 20);
+        graphics2D.drawString("Снаружи кругов: " + searchResult.getOutsideCircleCount(), 10, 40);
+    }
+
     private void drawPoint(Graphics2D graphics2D, PlanePoint pointData) {
         int screenX = toScreenX(pointData.getXCoordinate());
         int screenY = toScreenY(pointData.getYCoordinate());
         graphics2D.fillOval(screenX - POINT_DIAMETER / 2, screenY - POINT_DIAMETER / 2, POINT_DIAMETER, POINT_DIAMETER);
-        graphics2D.drawString(pointData.toString(), screenX + 6, screenY - 6);
     }
 
     private int toScreenX(double xCoordinate) {
@@ -207,7 +216,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     private void updateMouseData(MouseEvent mouseEvent) {
         PlanePoint mousePoint = toPlanePoint(mouseEvent.getPoint());
-        mainFrame.updateMousePoint(mousePoint);
         if (previewCircleCenter != null) {
             previewCircleRadius = GeometryUtils.distanceBetween(previewCircleCenter, mousePoint);
             repaint();
