@@ -12,7 +12,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private final MainFrame mainFrame;
     private ProjectData projectData;
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
-    private InputTool inputTool = InputTool.POINT;
     private PlanePoint previewCircleCenter;
     private double previewCircleRadius;
 
@@ -34,17 +33,10 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         repaint();
     }
 
-    public void setInputTool(InputTool inputTool) {
-        this.inputTool = inputTool;
-        cancelCirclePreview();
-        repaint();
-    }
-
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = prepareGraphics(graphics);
-        drawAxes(graphics2D);
         drawStoredCircles(graphics2D);
         drawTriangleResult(graphics2D);
         drawPreviewCircle(graphics2D);
@@ -57,16 +49,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         Graphics2D graphics2D = (Graphics2D) graphics.create();
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         return graphics2D;
-    }
-
-    private void drawAxes(Graphics2D graphics2D) {
-        int centerX = getWidth() / 2;
-        int centerY = getHeight() / 2;
-        graphics2D.setColor(Color.GRAY);
-        graphics2D.drawLine(0, centerY, getWidth(), centerY);
-        graphics2D.drawLine(centerX, 0, centerX, getHeight());
-        graphics2D.drawString("X", getWidth() - 20, centerY - 6);
-        graphics2D.drawString("Y", centerX + 6, 20);
     }
 
     private void drawStoredCircles(Graphics2D graphics2D) {
@@ -89,7 +71,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         int centerX = toScreenX(circleData.getCenterPoint().getXCoordinate());
         int centerY = toScreenY(circleData.getCenterPoint().getYCoordinate());
         graphics2D.drawOval(centerX - radiusValue, centerY - radiusValue, radiusValue * 2, radiusValue * 2);
-        graphics2D.fillOval(centerX - 2, centerY - 2, 4, 4);
     }
 
     private void drawTriangleResult(Graphics2D graphics2D) {
@@ -160,11 +141,13 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         PlanePoint clickedPoint = toPlanePoint(mouseEvent.getPoint());
-        if (inputTool == InputTool.POINT) {
+        if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
             addPoint(clickedPoint);
             return;
         }
-        processCircleClick(clickedPoint);
+        if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+            processCircleClick(clickedPoint);
+        }
     }
 
     private void addPoint(PlanePoint clickedPoint) {
