@@ -12,7 +12,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private final MainFrame mainFrame;
     private ProjectData projectData;
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
-    private InputTool inputTool = InputTool.POINT;
     private PlanePoint previewCircleCenter;
     private double previewCircleRadius;
 
@@ -31,12 +30,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     public void setSearchResult(TriangleSearchResult searchResult) {
         this.searchResult = searchResult;
-        repaint();
-    }
-
-    public void setInputTool(InputTool inputTool) {
-        this.inputTool = inputTool;
-        cancelCirclePreview();
         repaint();
     }
 
@@ -89,7 +82,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         int centerX = toScreenX(circleData.getCenterPoint().getXCoordinate());
         int centerY = toScreenY(circleData.getCenterPoint().getYCoordinate());
         graphics2D.drawOval(centerX - radiusValue, centerY - radiusValue, radiusValue * 2, radiusValue * 2);
-        graphics2D.fillOval(centerX - 2, centerY - 2, 4, 4);
     }
 
     private void drawTriangleResult(Graphics2D graphics2D) {
@@ -160,11 +152,13 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         PlanePoint clickedPoint = toPlanePoint(mouseEvent.getPoint());
-        if (inputTool == InputTool.POINT) {
+        if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
             addPoint(clickedPoint);
             return;
         }
-        processCircleClick(clickedPoint);
+        if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+            processCircleClick(clickedPoint);
+        }
     }
 
     private void addPoint(PlanePoint clickedPoint) {
