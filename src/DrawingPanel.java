@@ -5,7 +5,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener {
-    private static final int GRID_STEP = 50;
     private static final int POINT_DIAMETER = 8;
     private static final Color OUTSIDE_CIRCLE_COLOR = new Color(0, 130, 0);
     private static final Color INTERSECTING_CIRCLE_COLOR = new Color(200, 120, 0);
@@ -45,12 +44,12 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = prepareGraphics(graphics);
-        drawGrid(graphics2D);
         drawAxes(graphics2D);
         drawStoredCircles(graphics2D);
         drawTriangleResult(graphics2D);
         drawPreviewCircle(graphics2D);
         drawStoredPoints(graphics2D);
+        drawResultInfo(graphics2D);
         graphics2D.dispose();
     }
 
@@ -58,16 +57,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         Graphics2D graphics2D = (Graphics2D) graphics.create();
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         return graphics2D;
-    }
-
-    private void drawGrid(Graphics2D graphics2D) {
-        graphics2D.setColor(new Color(230, 230, 230));
-        for (int xCoordinate = 0; xCoordinate <= getWidth(); xCoordinate += GRID_STEP) {
-            graphics2D.drawLine(xCoordinate, 0, xCoordinate, getHeight());
-        }
-        for (int yCoordinate = 0; yCoordinate <= getHeight(); yCoordinate += GRID_STEP) {
-            graphics2D.drawLine(0, yCoordinate, getWidth(), yCoordinate);
-        }
     }
 
     private void drawAxes(Graphics2D graphics2D) {
@@ -143,7 +132,15 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         int screenX = toScreenX(pointData.getXCoordinate());
         int screenY = toScreenY(pointData.getYCoordinate());
         graphics2D.fillOval(screenX - POINT_DIAMETER / 2, screenY - POINT_DIAMETER / 2, POINT_DIAMETER, POINT_DIAMETER);
-        graphics2D.drawString(pointData.toString(), screenX + 6, screenY - 6);
+    }
+
+    private void drawResultInfo(Graphics2D graphics2D) {
+        if (!searchResult.hasTriangle()) {
+            return;
+        }
+        graphics2D.setColor(Color.BLACK);
+        graphics2D.drawString("Снаружи кругов: " + searchResult.getOutsideCircleCount(), 12, 20);
+        graphics2D.drawString("Периметр: " + String.format("%.2f", searchResult.getPerimeterValue()), 12, 38);
     }
 
     private int toScreenX(double xCoordinate) {
