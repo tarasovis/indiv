@@ -22,6 +22,8 @@ public class MainFrame extends JFrame {
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createFileMenu());
+        menuBar.add(createDataMenu());
+        menuBar.add(createToolMenu());
         menuBar.add(createActionMenu());
         return menuBar;
     }
@@ -31,18 +33,28 @@ public class MainFrame extends JFrame {
         fileMenu.add(createMenuItem("Открыть...", this::openDataFile));
         fileMenu.add(createMenuItem("Сохранить...", this::saveDataFile));
         fileMenu.addSeparator();
-        fileMenu.add(createMenuItem("Пример 1", () -> loadExampleFile("data/example_1.txt")));
-        fileMenu.add(createMenuItem("Пример 2", () -> loadExampleFile("data/example_2.txt")));
-        fileMenu.addSeparator();
         fileMenu.add(createMenuItem("Выход", this::dispose));
         return fileMenu;
     }
 
+    private JMenu createDataMenu() {
+        JMenu dataMenu = new JMenu("Данные");
+        dataMenu.add(createMenuItem("Ввод с клавиатуры", this::readDataFromKeyboard));
+        dataMenu.add(createMenuItem("Загрузить пример 1", () -> loadExampleFile("data/example_1.txt")));
+        dataMenu.add(createMenuItem("Загрузить пример 2", () -> loadExampleFile("data/example_2.txt")));
+        dataMenu.add(createMenuItem("Очистить", this::clearProjectData));
+        return dataMenu;
+    }
+
+    private JMenu createToolMenu() {
+        JMenu toolMenu = new JMenu("Инструмент");
+        toolMenu.add(createMenuItem("Точка", () -> drawingPanel.setInputTool(InputTool.POINT)));
+        toolMenu.add(createMenuItem("Круг", () -> drawingPanel.setInputTool(InputTool.CIRCLE)));
+        return toolMenu;
+    }
+
     private JMenu createActionMenu() {
         JMenu actionMenu = new JMenu("Действия");
-        actionMenu.add(createMenuItem("Ввод с клавиатуры", this::readDataFromKeyboard));
-        actionMenu.add(createMenuItem("Очистить", this::clearProjectData));
-        actionMenu.addSeparator();
         actionMenu.add(createMenuItem("Найти лучший треугольник", this::findBestTriangle));
         return actionMenu;
     }
@@ -153,8 +165,12 @@ public class MainFrame extends JFrame {
     }
 
     private String buildResultText() {
+        TriangleData triangleData = searchResult.getTriangleData();
         return "Снаружи кругов: " + searchResult.getOutsideCircleCount()
-                + "\nПериметр: " + String.format("%.2f", searchResult.getPerimeterValue());
+                + "\nПериметр: " + String.format("%.2f", searchResult.getPerimeterValue())
+                + "\nA=" + triangleData.getFirstVertex()
+                + ", B=" + triangleData.getSecondVertex()
+                + ", C=" + triangleData.getThirdVertex();
     }
 
     public void notifyAboutDataChange() {
