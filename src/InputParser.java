@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class InputParser {
@@ -18,36 +17,48 @@ public class InputParser {
     }
 
     private static void parseLine(String line, int lineNumber, List<PointData> points, List<CircleData> circles) {
-        String trimmed = line.trim();
-        if (trimmed.isEmpty()) {
+        String trimmedLine = line.trim();
+        if (trimmedLine.isEmpty()) {
             return;
         }
-        Scanner lineScanner = new Scanner(trimmed);
-        lineScanner.useLocale(Locale.US);
-        readObject(lineScanner, lineNumber, points, circles);
-        lineScanner.close();
+        String[] tokens = trimmedLine.split("\\s+");
+        if (tokens.length == 2) {
+            points.add(parsePoint(tokens));
+            return;
+        }
+        if (tokens.length == 3) {
+            circles.add(parseCircle(tokens));
+            return;
+        }
+        showWarning(lineNumber);
     }
 
-    private static void readObject(Scanner lineScanner, int lineNumber,
-                                   List<PointData> points, List<CircleData> circles) {
-        if (!lineScanner.hasNextDouble()) {
-            showWarning(lineNumber);
-            return;
+    private static PointData parsePoint(String[] tokens) {
+        int x = parseInt(tokens[0]);
+        int y = parseInt(tokens[1]);
+        return new PointData(x, y);
+    }
+
+    private static CircleData parseCircle(String[] tokens) {
+        double x = parseDouble(tokens[0]);
+        double y = parseDouble(tokens[1]);
+        double radius = Math.max(0, parseDouble(tokens[2]));
+        return new CircleData(x, y, radius);
+    }
+
+    private static int parseInt(String value) {
+        return (int) Math.round(parseDouble(value));
+    }
+
+    private static double parseDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException exception) {
+            return 0;
         }
-        double first = lineScanner.nextDouble();
-        if (!lineScanner.hasNextDouble()) {
-            showWarning(lineNumber);
-            return;
-        }
-        double second = lineScanner.nextDouble();
-        if (lineScanner.hasNextDouble()) {
-            circles.add(new CircleData(first, second, Math.max(0, lineScanner.nextDouble())));
-            return;
-        }
-        points.add(new PointData((int) Math.round(first), (int) Math.round(second)));
     }
 
     private static void showWarning(int lineNumber) {
-        JOptionPane.showMessageDialog(null, "Строка " + lineNumber + " пропущена: нужно 2 или 3 числа.");
+        JOptionPane.showMessageDialog(null, "Skipped line " + lineNumber + ": expected 2 or 3 numbers.");
     }
 }

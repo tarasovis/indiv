@@ -9,10 +9,9 @@ import java.util.List;
 public class DrawPanel extends JPanel implements MouseListener, MouseMotionListener {
     private final List<PointData> points = new ArrayList<>();
     private final List<CircleData> circles = new ArrayList<>();
-    private final List<Boolean> outsideFlags = new ArrayList<>();
     private TriangleData resultTriangle;
-    private PointData circleCenterDraft;
-    private PointData mousePoint;
+    private PointData previewCircleCenter;
+    private PointData currentMouse;
 
     public DrawPanel() {
         setBackground(Color.WHITE);
@@ -28,11 +27,19 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         return circles;
     }
 
+    public void setResultTriangle(TriangleData triangle) {
+        this.resultTriangle = triangle;
+    }
+
+    public void clearResult() {
+        resultTriangle = null;
+    }
+
     public void clearAll() {
         points.clear();
         circles.clear();
-        dropSolution();
-        circleCenterDraft = null;
+        clearResult();
+        previewCircleCenter = null;
         repaint();
     }
 
@@ -41,153 +48,131 @@ public class DrawPanel extends JPanel implements MouseListener, MouseMotionListe
         circles.clear();
         points.addAll(dataSet.points());
         circles.addAll(dataSet.circles());
-        dropSolution();
-        circleCenterDraft = null;
-        repaint();
-    }
-
-    public void dropSolution() {
-        resultTriangle = null;
-        outsideFlags.clear();
-    }
-
-    public void applySearchResult(TriangleSearchResult result) {
-        resultTriangle = result.triangle();
-        outsideFlags.clear();
-        if (resultTriangle != null) {
-            outsideFlags.addAll(GeometryUtils.classifyCircles(circles, resultTriangle));
-        }
+        clearResult();
+        previewCircleCenter = null;
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-        Graphics2D g2 = (Graphics2D) graphics;
-        drawCircles(g2);
-        drawPoints(g2);
-        drawCircleDraft(g2);
-        drawTriangle(g2);
+        Graphics2D graphics2d = (Graphics2D) graphics;
+        drawCircles(graphics2d);
+        drawPoints(graphics2d);
+        drawPreviewCircle(graphics2d);
+        drawResultTriangle(graphics2d);
     }
 
-    private void drawCircles(Graphics2D g2) {
-        for (int index = 0; index < circles.size(); index++) {
-            CircleData circle = circles.get(index);
-            g2.setColor(resolveCircleColor(index));
-            drawCircle(g2, circle);
-        }
-    }
-
-    private Color resolveCircleColor(int index) {
-        if (outsideFlags.isEmpty() || index >= outsideFlags.size()) {
-            return new Color(45, 95, 200);
-        }
-        return outsideFlags.get(index) ? new Color(0, 150, 70) : new Color(200, 60, 60);
-    }
-
-    private void drawCircle(Graphics2D g2, CircleData circle) {
-        int diameter = (int) Math.round(2 * circle.radius());
-        int x = (int) Math.round(circle.centerX() - circle.radius());
-        int y = (int) Math.round(circle.centerY() - circle.radius());
-        g2.drawOval(x, y, diameter, diameter);
-    }
-
-    private void drawPoints(Graphics2D g2) {
-        g2.setColor(Color.BLACK);
+    private void drawPoints(Graphics2D graphics2d) {
+        graphics2d.setColor(Color.BLACK);
         for (PointData point : points) {
-            g2.fillOval(point.x() - 3, point.y() - 3, 6, 6);
+            graphics2d.fillOval(point.x() - 3, point.y() - 3, 6, 6);
         }
     }
 
-    private void drawCircleDraft(Graphics2D g2) {
-        if (circleCenterDraft == null || mousePoint == null) {
+    private void drawCircles(Graphics2D graphics2d) {
+        graphics2d.setColor(new Color(40, 90, 190));
+        for (CircleData circle : circles) {
+            int diameter = (int) Math.round(2 * circle.radius());
+            int x = (int) Math.round(circle.centerX() - circle.radius());
+            int y = (int) Math.round(circle.centerY() - circle.radius());
+            graphics2d.drawOval(x, y, diameter, diameter);
+        }
+    }
+
+    private void drawPreviewCircle(Graphics2D graphics2d) {
+        if (previewCircleCenter == null || currentMouse == null) {
             return;
         }
-        g2.setColor(new Color(90, 90, 90));
-        double radius = GeometryUtils.distance(circleCenterDraft, mousePoint);
-        drawCircle(g2, new CircleData(circleCenterDraft.x(), circleCenterDraft.y(), radius));
+        double radius = GeometryUtils.distance(previewCircleCenter, currentMouse);
+        graphics2d.setColor(new Color(80, 80, 80));
+        int diameter = (int) Math.round(2 * radius);
+        int x = (int) Math.round(previewCircleCenter.x() - radius);
+        int y = (int) Math.round(previewCircleCenter.y() - radius);
+        graphics2d.drawOval(x, y, diameter, diameter);
     }
 
-    private void drawTriangle(Graphics2D g2) {
+    private void drawResultTriangle(Graphics2D graphics2d) {
         if (resultTriangle == null) {
             return;
         }
-        g2.setColor(new Color(220, 30, 30));
-        Stroke oldStroke = g2.getStroke();
-        g2.setStroke(new BasicStroke(2f));
-        drawEdge(g2, resultTriangle.a(), resultTriangle.b());
-        drawEdge(g2, resultTriangle.b(), resultTriangle.c());
-        drawEdge(g2, resultTriangle.c(), resultTriangle.a());
-        g2.setStroke(oldStroke);
+        graphics2d.setColor(new Color(220, 30, 30));
+        Stroke oldStroke = graphics2d.getStroke();
+        graphics2d.setStroke(new BasicStroke(2f));
+        drawEdge(graphics2d, resultTriangle.a(), resultTriangle.b());
+        drawEdge(graphics2d, resultTriangle.b(), resultTriangle.c());
+        drawEdge(graphics2d, resultTriangle.c(), resultTriangle.a());
+        graphics2d.setStroke(oldStroke);
     }
 
-    private void drawEdge(Graphics2D g2, PointData first, PointData second) {
-        g2.drawLine(first.x(), first.y(), second.x(), second.y());
+    private void drawEdge(Graphics2D graphics2d, PointData p1, PointData p2) {
+        graphics2d.drawLine(p1.x(), p1.y(), p2.x(), p2.y());
     }
 
     @Override
-    public void mouseClicked(MouseEvent event) {
-        if (SwingUtilities.isLeftMouseButton(event)) {
-            addPoint(event.getX(), event.getY());
+    public void mouseClicked(MouseEvent mouseEvent) {
+        if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+            addPoint(mouseEvent);
             return;
         }
-        if (SwingUtilities.isRightMouseButton(event)) {
-            processCircleClick(event.getX(), event.getY());
+        if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+            processRightClick(mouseEvent);
         }
     }
 
-    private void addPoint(int x, int y) {
-        points.add(new PointData(x, y));
-        dropSolution();
+    private void addPoint(MouseEvent mouseEvent) {
+        points.add(new PointData(mouseEvent.getX(), mouseEvent.getY()));
+        clearResult();
         repaint();
     }
 
-    private void processCircleClick(int x, int y) {
-        if (circleCenterDraft == null) {
-            circleCenterDraft = new PointData(x, y);
-            mousePoint = circleCenterDraft;
+    private void processRightClick(MouseEvent mouseEvent) {
+        if (previewCircleCenter == null) {
+            previewCircleCenter = new PointData(mouseEvent.getX(), mouseEvent.getY());
+            currentMouse = previewCircleCenter;
             repaint();
             return;
         }
-        finishCircle(x, y);
+        finalizeCircle(mouseEvent);
     }
 
-    private void finishCircle(int x, int y) {
-        double radius = GeometryUtils.distance(circleCenterDraft, new PointData(x, y));
+    private void finalizeCircle(MouseEvent mouseEvent) {
+        PointData endPoint = new PointData(mouseEvent.getX(), mouseEvent.getY());
+        double radius = GeometryUtils.distance(previewCircleCenter, endPoint);
         if (radius > 0.5) {
-            circles.add(new CircleData(circleCenterDraft.x(), circleCenterDraft.y(), radius));
+            circles.add(new CircleData(previewCircleCenter.x(), previewCircleCenter.y(), radius));
         }
-        circleCenterDraft = null;
-        dropSolution();
+        previewCircleCenter = null;
+        clearResult();
         repaint();
     }
 
     @Override
-    public void mouseMoved(MouseEvent event) {
-        mousePoint = new PointData(event.getX(), event.getY());
-        if (circleCenterDraft != null) {
+    public void mouseMoved(MouseEvent mouseEvent) {
+        currentMouse = new PointData(mouseEvent.getX(), mouseEvent.getY());
+        if (previewCircleCenter != null) {
             repaint();
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent event) {
-        mouseMoved(event);
+    public void mousePressed(MouseEvent mouseEvent) {
     }
 
     @Override
-    public void mousePressed(MouseEvent event) {
+    public void mouseReleased(MouseEvent mouseEvent) {
     }
 
     @Override
-    public void mouseReleased(MouseEvent event) {
+    public void mouseEntered(MouseEvent mouseEvent) {
     }
 
     @Override
-    public void mouseEntered(MouseEvent event) {
+    public void mouseExited(MouseEvent mouseEvent) {
     }
 
     @Override
-    public void mouseExited(MouseEvent event) {
+    public void mouseDragged(MouseEvent mouseEvent) {
+        mouseMoved(mouseEvent);
     }
 }

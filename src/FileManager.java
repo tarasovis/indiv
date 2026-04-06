@@ -16,7 +16,7 @@ public class FileManager {
             writePoints(out, points);
             writeCircles(out, circles);
         } catch (FileNotFoundException exception) {
-            showError("Ошибка сохранения: " + exception.getMessage());
+            showError("Failed to save file: " + exception.getMessage());
         }
     }
 
@@ -36,74 +36,61 @@ public class FileManager {
 
     public static DataSet load(File file) {
         try (Scanner scanner = new Scanner(file)) {
-            scanner.useLocale(Locale.US);
-            return readData(scanner);
+            return parseDataSet(scanner);
         } catch (Exception exception) {
-            showError("Ошибка чтения: " + exception.getMessage());
+            showError("Failed to load file: " + exception.getMessage());
             return new DataSet(new ArrayList<>(), new ArrayList<>());
         }
     }
 
-    private static DataSet readData(Scanner scanner) {
-        int pointCount = nextIntRequired(scanner, "Количество точек");
-        List<PointData> points = readPoints(scanner, pointCount);
-        int circleCount = nextIntRequired(scanner, "Количество кругов");
-        List<CircleData> circles = readCircles(scanner, circleCount);
+    private static DataSet parseDataSet(Scanner scanner) {
+        List<PointData> points = readPoints(scanner);
+        List<CircleData> circles = readCircles(scanner);
         return new DataSet(points, circles);
     }
 
-    private static List<PointData> readPoints(Scanner scanner, int count) {
+    private static List<PointData> readPoints(Scanner scanner) {
+        int pointCount = safeNextInt(scanner);
         List<PointData> points = new ArrayList<>();
-        for (int index = 0; index < count; index++) {
-            int x = nextIntRequired(scanner, "x точки");
-            int y = nextIntRequired(scanner, "y точки");
-            points.add(new PointData(x, y));
+        for (int index = 0; index < pointCount; index++) {
+            points.add(new PointData(safeNextInt(scanner), safeNextInt(scanner)));
         }
         return points;
     }
 
-    private static List<CircleData> readCircles(Scanner scanner, int count) {
+    private static List<CircleData> readCircles(Scanner scanner) {
+        int circleCount = safeNextInt(scanner);
         List<CircleData> circles = new ArrayList<>();
-        for (int index = 0; index < count; index++) {
-            double x = nextDoubleRequired(scanner, "x центра");
-            double y = nextDoubleRequired(scanner, "y центра");
-            double radius = nextDoubleRequired(scanner, "радиус");
-            circles.add(new CircleData(x, y, Math.max(0, radius)));
+        for (int index = 0; index < circleCount; index++) {
+            circles.add(new CircleData(safeNextDouble(scanner), safeNextDouble(scanner), safeNextDouble(scanner)));
         }
         return circles;
     }
 
-    private static int nextIntRequired(Scanner scanner, String name) {
-        if (!scanner.hasNextInt()) {
-            throw new IllegalArgumentException("Не найдено значение: " + name);
-        }
-        return scanner.nextInt();
+    private static int safeNextInt(Scanner scanner) {
+        return scanner.hasNextInt() ? scanner.nextInt() : 0;
     }
 
-    private static double nextDoubleRequired(Scanner scanner, String name) {
-        if (!scanner.hasNextDouble()) {
-            throw new IllegalArgumentException("Не найдено значение: " + name);
-        }
-        return scanner.nextDouble();
+    private static double safeNextDouble(Scanner scanner) {
+        return scanner.hasNextDouble() ? scanner.nextDouble() : 0;
     }
 
     public static DataSet example1() {
-        return fromText("4\n100 100\n280 110\n200 270\n120 240\n3\n500 120 60\n580 320 70\n420 260 40\n");
+        return fromText("3\n100 100\n300 120\n180 260\n2\n500 120 50\n580 330 70\n");
     }
 
     public static DataSet example2() {
-        return fromText("5\n80 90\n220 80\n340 170\n250 300\n90 260\n4\n420 90 50\n460 250 65\n70 340 45\n360 360 35\n");
+        return fromText("5\n90 80\n200 60\n310 140\n260 260\n120 240\n3\n420 80 45\n450 250 55\n70 320 40\n");
     }
 
     private static DataSet fromText(String text) {
         Scanner scanner = new Scanner(text);
-        scanner.useLocale(Locale.US);
-        DataSet dataSet = readData(scanner);
+        DataSet dataSet = parseDataSet(scanner);
         scanner.close();
         return dataSet;
     }
 
-    private static void showError(String text) {
-        JOptionPane.showMessageDialog(null, text);
+    private static void showError(String message) {
+        JOptionPane.showMessageDialog(null, message);
     }
 }

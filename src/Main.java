@@ -1,94 +1,109 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Main extends JFrame {
     private final DrawPanel drawPanel;
 
     public Main() {
-        super("Треугольник и круги");
+        super("Triangle and circles");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(950, 680);
+        setSize(900, 650);
         setLocationRelativeTo(null);
         drawPanel = new DrawPanel();
         add(drawPanel, BorderLayout.CENTER);
-        setJMenuBar(createMenuBar());
+        setJMenuBar(buildMenuBar());
         setVisible(true);
     }
 
-    private JMenuBar createMenuBar() {
+    private JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createFileMenu());
-        menuBar.add(createToolsMenu());
+        menuBar.add(buildFileMenu());
+        menuBar.add(buildKeyboardInputItem());
+        menuBar.add(buildClearItem());
+        menuBar.add(buildFindItem());
         return menuBar;
     }
 
-    private JMenu createFileMenu() {
-        JMenu menu = new JMenu("Файл");
-        menu.add(item("Открыть", e -> openFile()));
-        menu.add(item("Сохранить", e -> saveFile()));
-        menu.add(item("Пример 1", e -> drawPanel.setData(FileManager.example1())));
-        menu.add(item("Пример 2", e -> drawPanel.setData(FileManager.example2())));
-        menu.addSeparator();
-        menu.add(item("Выход", e -> System.exit(0)));
-        return menu;
+    private JMenu buildFileMenu() {
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.add(menuItem("Open", e -> openFromFile()));
+        fileMenu.add(menuItem("Save", e -> saveToFile()));
+        fileMenu.add(menuItem("Example 1", e -> loadExample(1)));
+        fileMenu.add(menuItem("Example 2", e -> loadExample(2)));
+        fileMenu.addSeparator();
+        fileMenu.add(menuItem("Exit", e -> System.exit(0)));
+        return fileMenu;
     }
 
-    private JMenu createToolsMenu() {
-        JMenu menu = new JMenu("Инструменты");
-        menu.add(item("Ввод с клавиатуры", e -> keyboardInput()));
-        menu.add(item("Очистить", e -> drawPanel.clearAll()));
-        menu.add(item("Найти треугольник", e -> findTriangle()));
-        return menu;
+    private JMenuItem buildKeyboardInputItem() {
+        return menuItem("Keyboard input", e -> processKeyboardInput());
     }
 
-    private JMenuItem item(String title, java.awt.event.ActionListener action) {
-        JMenuItem menuItem = new JMenuItem(title);
-        menuItem.addActionListener(action);
-        return menuItem;
+    private JMenuItem buildClearItem() {
+        return menuItem("Clear", e -> drawPanel.clearAll());
     }
 
-    private void keyboardInput() {
+    private JMenuItem buildFindItem() {
+        return menuItem("Find triangle", e -> findTriangle());
+    }
+
+    private JMenuItem menuItem(String title, java.awt.event.ActionListener action) {
+        JMenuItem item = new JMenuItem(title);
+        item.addActionListener(action);
+        return item;
+    }
+
+    private void processKeyboardInput() {
         String text = JOptionPane.showInputDialog(this,
-                "Введите по строкам:\nточка: x y\nкруг: x y r");
+                "Enter data line by line:\npoint: x y\ncircle: x y r");
         if (text == null || text.isBlank()) {
             return;
         }
         InputParser.applyLines(text, drawPanel.getPoints(), drawPanel.getCircles());
-        drawPanel.dropSolution();
+        drawPanel.clearResult();
         drawPanel.repaint();
     }
 
     private void findTriangle() {
         TriangleSearchResult result = GeometryUtils.findBestTriangle(
                 drawPanel.getPoints(), drawPanel.getCircles());
-        drawPanel.applySearchResult(result);
+        drawPanel.setResultTriangle(result.triangle());
         showResultDialog(result);
+        drawPanel.repaint();
     }
 
     private void showResultDialog(TriangleSearchResult result) {
         if (result.triangle() == null) {
-            JOptionPane.showMessageDialog(this, "Подходящий треугольник не найден.");
+            JOptionPane.showMessageDialog(this, "No valid triangle found.");
             return;
         }
-        String message = String.format("Периметр: %.2f\nКругов снаружи: %d",
+        String message = String.format("Perimeter: %.2f\nOutside circles: %d",
                 result.perimeter(), result.outsideCount());
         JOptionPane.showMessageDialog(this, message);
     }
 
-    private void openFile() {
+    private void openFromFile() {
         JFileChooser chooser = new JFileChooser(".");
         if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        drawPanel.setData(FileManager.load(chooser.getSelectedFile()));
+        DataSet data = FileManager.load(chooser.getSelectedFile());
+        drawPanel.setData(data);
     }
 
-    private void saveFile() {
+    private void saveToFile() {
         JFileChooser chooser = new JFileChooser(".");
         if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        FileManager.save(chooser.getSelectedFile(), drawPanel.getPoints(), drawPanel.getCircles());
+        File target = chooser.getSelectedFile();
+        FileManager.save(target, drawPanel.getPoints(), drawPanel.getCircles());
+    }
+
+    private void loadExample(int index) {
+        DataSet data = index == 1 ? FileManager.example1() : FileManager.example2();
+        drawPanel.setData(data);
     }
 
     public static void main(String[] args) {
