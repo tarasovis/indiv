@@ -1,39 +1,69 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class ProjectData {
-    // Коллекции исходных объектов задачи.
-    private final List<PlanePoint> pointList = new ArrayList<PlanePoint>();
-    private final List<PlaneCircle> circleList = new ArrayList<PlaneCircle>();
+    private PlanePoint[] pointArray = new PlanePoint[64];
+    private PlaneCircle[] circleArray = new PlaneCircle[64];
+    private int pointCount;
+    private int circleCount;
 
     public void addPoint(PlanePoint pointData) {
-        pointList.add(pointData);
+        ensurePointCapacity(pointCount + 1);
+        pointArray[pointCount] = pointData;
+        pointCount++;
     }
 
     public void addCircle(PlaneCircle circleData) {
-        circleList.add(circleData);
+        ensureCircleCapacity(circleCount + 1);
+        circleArray[circleCount] = circleData;
+        circleCount++;
     }
 
     public void clearAllData() {
-        pointList.clear();
-        circleList.clear();
+        pointCount = 0;
+        circleCount = 0;
     }
 
-    public List<PlanePoint> getPointList() {
-        // Возвращаем только read-only представление для защиты данных.
-        return Collections.unmodifiableList(pointList);
+    public PlanePoint getPointAt(int pointIndex) {
+        return pointArray[pointIndex];
     }
 
-    public List<PlaneCircle> getCircleList() {
-        return Collections.unmodifiableList(circleList);
+    public PlaneCircle getCircleAt(int circleIndex) {
+        return circleArray[circleIndex];
     }
 
     public int getPointCount() {
-        return pointList.size();
+        return pointCount;
     }
 
     public int getCircleCount() {
-        return circleList.size();
+        return circleCount;
+    }
+
+    private void ensurePointCapacity(int requiredCount) {
+        if (requiredCount <= pointArray.length) {
+            return;
+        }
+        pointArray = growPointArray(pointArray);
+    }
+
+    private void ensureCircleCapacity(int requiredCount) {
+        if (requiredCount <= circleArray.length) {
+            return;
+        }
+        circleArray = growCircleArray(circleArray);
+    }
+
+    private PlanePoint[] growPointArray(PlanePoint[] oldArray) {
+        PlanePoint[] newArray = new PlanePoint[oldArray.length * 2];
+        for (int pointIndex = 0; pointIndex < oldArray.length; pointIndex++) {
+            newArray[pointIndex] = oldArray[pointIndex];
+        }
+        return newArray;
+    }
+
+    private PlaneCircle[] growCircleArray(PlaneCircle[] oldArray) {
+        PlaneCircle[] newArray = new PlaneCircle[oldArray.length * 2];
+        for (int circleIndex = 0; circleIndex < oldArray.length; circleIndex++) {
+            newArray[circleIndex] = oldArray[circleIndex];
+        }
+        return newArray;
     }
 }
