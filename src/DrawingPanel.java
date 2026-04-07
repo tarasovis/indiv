@@ -66,9 +66,10 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private void drawStoredCircles(Graphics2D graphics2D) {
-        for (PlaneCircle circleData : projectData.getCircleList()) {
-            graphics2D.setColor(getCircleColor(circleData));
-            drawCircle(graphics2D, circleData);
+        PlaneCircle[] circleArray = projectData.getCircleArray();
+        for (int i = 0; i < circleArray.length; i++) {
+            graphics2D.setColor(getCircleColor(circleArray[i]));
+            drawCircle(graphics2D, circleArray[i]);
         }
     }
 
@@ -121,8 +122,9 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     private void drawStoredPoints(Graphics2D graphics2D) {
         graphics2D.setColor(Color.BLACK);
-        for (PlanePoint pointData : projectData.getPointList()) {
-            drawPoint(graphics2D, pointData);
+        PlanePoint[] pointArray = projectData.getPointArray();
+        for (int i = 0; i < pointArray.length; i++) {
+            drawPoint(graphics2D, pointArray[i]);
         }
     }
 
@@ -209,7 +211,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private void updateMouseData(MouseEvent mouseEvent) {
         // Во время движения мыши обновляем радиус предпросмотра круга.
         PlanePoint mousePoint = toPlanePoint(mouseEvent.getPoint());
-        mainFrame.updateMousePoint(mousePoint);
         if (previewCircleCenter != null) {
             previewCircleRadius = GeometryUtils.distanceBetween(previewCircleCenter, mousePoint);
             repaint();
