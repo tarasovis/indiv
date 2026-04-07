@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class MainFrame extends JFrame {
+    // Главная панель рисования: хранит логику мыши и визуализацию данных.
     private final DrawingPanel drawingPanel;
+    // Текущие данные проекта (точки и круги).
     private ProjectData projectData = new ProjectData();
+    // Последний найденный результат поиска треугольника.
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
 
     public MainFrame() {
@@ -20,6 +23,7 @@ public class MainFrame extends JFrame {
     }
 
     private JMenuBar createMenuBar() {
+        // Меню разбито на блоки "Файл" и "Действия" для простой навигации.
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createFileMenu());
         menuBar.add(createActionMenu());
@@ -46,6 +50,7 @@ public class MainFrame extends JFrame {
     }
 
     private JMenuItem createMenuItem(String itemText, Runnable action) {
+        // Универсальный фабричный метод для пунктов меню.
         JMenuItem menuItem = new JMenuItem(itemText);
         menuItem.addActionListener(actionEvent -> action.run());
         return menuItem;
@@ -82,6 +87,7 @@ public class MainFrame extends JFrame {
     }
 
     private void readDataFromKeyboard() {
+        // Пользователь редактирует подготовленный шаблон и подтверждает ввод.
         JTextArea inputArea = new JTextArea(createInputTemplate(), 14, 40);
         JScrollPane scrollPane = new JScrollPane(inputArea);
         int dialogResult = JOptionPane.showConfirmDialog(
@@ -101,6 +107,7 @@ public class MainFrame extends JFrame {
     }
 
     private String createInputTemplate() {
+        // Шаблон формата: сначала POINTS, затем CIRCLES и соответствующие числа.
         return "POINTS 3\n"
                 + "-150 40\n"
                 + "40 140\n"
@@ -119,6 +126,7 @@ public class MainFrame extends JFrame {
     }
 
     private void clearProjectData() {
+        // Полная очистка: данные и выделенный треугольник сбрасываются вместе.
         projectData = new ProjectData();
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setProjectData(projectData);
@@ -126,6 +134,7 @@ public class MainFrame extends JFrame {
     }
 
     private void applyProjectData(ProjectData loadedProjectData) {
+        // При загрузке всегда сбрасываем старый результат поиска.
         projectData = loadedProjectData;
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setProjectData(projectData);
@@ -133,6 +142,7 @@ public class MainFrame extends JFrame {
     }
 
     private void findBestTriangle() {
+        // Поиск запускается только если точек достаточно для построения треугольника.
         if (projectData.getPointCount() < 3) {
             showErrorMessage("Для поиска треугольника нужно минимум 3 точки.");
             return;
@@ -151,11 +161,13 @@ public class MainFrame extends JFrame {
     }
 
     private String buildResultText() {
+        // В диалоге выводим две требуемые характеристики результата.
         return "Снаружи кругов: " + searchResult.getOutsideCircleCount()
                 + "\nПериметр: " + String.format("%.2f", searchResult.getPerimeterValue());
     }
 
     public void notifyAboutDataChange() {
+        // Любое изменение входных данных делает старый результат неактуальным.
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setSearchResult(searchResult);
     }

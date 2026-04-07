@@ -1,4 +1,5 @@
 public class TriangleSearchResult {
+    // Может быть null, если валидный треугольник не найден.
     private final TriangleData triangleData;
     private final int outsideCircleCount;
 
@@ -8,6 +9,7 @@ public class TriangleSearchResult {
     }
 
     public static TriangleSearchResult emptyResult() {
+        // Специальное "пустое" значение для начального состояния.
         return new TriangleSearchResult(null, -1);
     }
 
