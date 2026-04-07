@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ProjectData {
+    // Коллекции исходных объектов задачи.
     private final List<PlanePoint> pointList = new ArrayList<PlanePoint>();
     private final List<PlaneCircle> circleList = new ArrayList<PlaneCircle>();
 
@@ -20,6 +21,7 @@ public class ProjectData {
     }
 
     public List<PlanePoint> getPointList() {
+        // Возвращаем только read-only представление для защиты данных.
         return Collections.unmodifiableList(pointList);
     }
 

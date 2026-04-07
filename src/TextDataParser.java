@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class TextDataParser {
     public static ProjectData parseText(String sourceText) {
+        // Поддерживаем десятичную точку независимо от локали ОС.
         Scanner textScanner = new Scanner(sourceText);
         textScanner.useLocale(Locale.US);
         ProjectData projectData = parseScanner(textScanner);
@@ -11,6 +12,7 @@ public class TextDataParser {
     }
 
     public static ProjectData parseScanner(Scanner textScanner) {
+        // Формат ввода: блок POINTS, затем блок CIRCLES.
         ProjectData projectData = new ProjectData();
         readKeyword(textScanner, "POINTS");
         readPointList(textScanner, projectData);
@@ -20,6 +22,7 @@ public class TextDataParser {
     }
 
     private static void readPointList(Scanner textScanner, ProjectData projectData) {
+        // Последовательно читаем координаты каждой точки.
         int pointCount = readNonNegativeInt(textScanner, "количество точек");
         for (int pointIndex = 0; pointIndex < pointCount; pointIndex++) {
             double xCoordinate = readDoubleValue(textScanner, "x точки");
@@ -29,6 +32,7 @@ public class TextDataParser {
     }
 
     private static void readCircleList(Scanner textScanner, ProjectData projectData) {
+        // Для каждого круга читаем центр и радиус.
         int circleCount = readNonNegativeInt(textScanner, "количество кругов");
         for (int circleIndex = 0; circleIndex < circleCount; circleIndex++) {
             double centerX = readDoubleValue(textScanner, "x центра круга");

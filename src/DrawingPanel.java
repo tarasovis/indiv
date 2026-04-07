@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener {
+    // Константы оформления (единый стиль отрисовки).
     private static final int POINT_DIAMETER = 8;
     private static final Color OUTSIDE_CIRCLE_COLOR = new Color(0, 130, 0);
     private static final Color INTERSECTING_CIRCLE_COLOR = new Color(200, 120, 0);
@@ -12,6 +13,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private final MainFrame mainFrame;
     private ProjectData projectData;
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
+    // Параметры временного круга, который строится правой кнопкой мыши.
     private PlanePoint previewCircleCenter;
     private double previewCircleRadius;
 
@@ -36,6 +38,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
+        // Рисуем слои в фиксированном порядке: фигуры, результат, предпросмотр, точки.
         Graphics2D graphics2D = prepareGraphics(graphics);
         drawAxes(graphics2D);
         drawStoredCircles(graphics2D);
@@ -70,6 +73,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private Color getCircleColor(PlaneCircle circleData) {
+        // После поиска подсвечиваем круги по отношению к найденному треугольнику.
         if (!searchResult.hasTriangle()) {
             return Color.BLUE;
         }
@@ -85,6 +89,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private void drawTriangleResult(Graphics2D graphics2D) {
+        // Результат выделяется полупрозрачной заливкой и жирным контуром.
         if (!searchResult.hasTriangle()) {
             return;
         }
@@ -106,6 +111,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private void drawPreviewCircle(Graphics2D graphics2D) {
+        // Пока круг не зафиксирован вторым кликом, показываем серый предпросмотр.
         if (previewCircleCenter == null) {
             return;
         }
@@ -127,6 +133,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private void drawResultInfo(Graphics2D graphics2D) {
+        // На холсте дублируем ключевые метрики найденного решения.
         if (!searchResult.hasTriangle()) {
             return;
         }
@@ -144,6 +151,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private PlanePoint toPlanePoint(Point screenPoint) {
+        // Преобразуем экранные координаты в декартовы координаты рабочей плоскости.
         double xCoordinate = screenPoint.x - getWidth() / 2.0;
         double yCoordinate = getHeight() / 2.0 - screenPoint.y;
         return new PlanePoint(xCoordinate, yCoordinate);
@@ -151,6 +159,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        // ЛКМ добавляет точку, ПКМ управляет двухшаговым построением круга.
         PlanePoint clickedPoint = toPlanePoint(mouseEvent.getPoint());
         if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
             addPoint(clickedPoint);
@@ -168,6 +177,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private void processCircleClick(PlanePoint clickedPoint) {
+        // Первый клик задает центр, второй — фиксирует радиус и добавляет круг.
         if (previewCircleCenter == null) {
             previewCircleCenter = clickedPoint;
             previewCircleRadius = 0.0;
@@ -197,6 +207,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     private void updateMouseData(MouseEvent mouseEvent) {
+        // Во время движения мыши обновляем радиус предпросмотра круга.
         PlanePoint mousePoint = toPlanePoint(mouseEvent.getPoint());
         mainFrame.updateMousePoint(mousePoint);
         if (previewCircleCenter != null) {

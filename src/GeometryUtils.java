@@ -1,6 +1,7 @@
 import java.util.List;
 
 public class GeometryUtils {
+    // Допуск для сравнения вещественных чисел.
     private static final double EPSILON = 1e-7;
 
     public static double distanceBetween(PlanePoint firstPoint, PlanePoint secondPoint) {
@@ -23,6 +24,7 @@ public class GeometryUtils {
     public static int countOutsideCircles(
             TriangleData triangleData,
             List<PlaneCircle> circleList) {
+        // Подсчитываем только круги без общих точек с треугольником.
         int outsideCircleCount = 0;
         for (PlaneCircle circleData : circleList) {
             if (isCircleOutsideTriangle(triangleData, circleData)) {
@@ -35,12 +37,15 @@ public class GeometryUtils {
     public static boolean isCircleOutsideTriangle(
             TriangleData triangleData,
             PlaneCircle circleData) {
+        // Если вершина треугольника попала в круг, пересечение уже есть.
         if (isTriangleVertexInsideCircle(triangleData, circleData)) {
             return false;
         }
+        // Центр круга в/на треугольнике означает пересечение областей.
         if (isPointInsideOrOnTriangle(circleData.getCenterPoint(), triangleData)) {
             return false;
         }
+        // Вне треугольника остаются только круги без касаний ребер.
         return !doesTriangleEdgeTouchCircle(triangleData, circleData);
     }
 
@@ -107,6 +112,7 @@ public class GeometryUtils {
             PlanePoint segmentStart,
             PlanePoint segmentEnd,
             PlaneCircle circleData) {
+        // Касание тоже считается пересечением, поэтому используем <=.
         double distanceToSegment = distanceFromPointToSegment(
                 circleData.getCenterPoint(),
                 segmentStart,
@@ -118,6 +124,7 @@ public class GeometryUtils {
             PlanePoint pointData,
             PlanePoint segmentStart,
             PlanePoint segmentEnd) {
+        // Проецируем точку на прямую и ограничиваем проекцию границами отрезка.
         double dxValue = segmentEnd.getXCoordinate() - segmentStart.getXCoordinate();
         double dyValue = segmentEnd.getYCoordinate() - segmentStart.getYCoordinate();
         double lengthSquare = dxValue * dxValue + dyValue * dyValue;

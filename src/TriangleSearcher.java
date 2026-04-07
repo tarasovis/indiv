@@ -2,6 +2,7 @@ import java.util.List;
 
 public class TriangleSearcher {
     public static TriangleSearchResult findBestTriangle(ProjectData projectData) {
+        // Полный перебор всех сочетаний из трех точек.
         TriangleSearchResult bestResult = TriangleSearchResult.emptyResult();
         List<PlanePoint> pointList = projectData.getPointList();
         for (int firstIndex = 0; firstIndex < pointList.size() - 2; firstIndex++) {
@@ -22,6 +23,7 @@ public class TriangleSearcher {
             TriangleSearchResult currentBestResult,
             TriangleData candidateTriangle,
             ProjectData projectData) {
+        // Вырожденные треугольники не участвуют в оптимизации.
         if (GeometryUtils.isDegenerateTriangle(candidateTriangle)) {
             return currentBestResult;
         }
@@ -38,6 +40,7 @@ public class TriangleSearcher {
     private static boolean isCandidateBetter(
             TriangleSearchResult currentBestResult,
             TriangleSearchResult candidateResult) {
+        // Приоритет 1: максимум внешних кругов. Приоритет 2: максимум периметра.
         if (!currentBestResult.hasTriangle()) {
             return true;
         }
