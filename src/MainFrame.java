@@ -172,9 +172,6 @@ public class MainFrame extends JFrame {
         drawingPanel.setSearchResult(searchResult);
     }
 
-    public void updateMousePoint(PlanePoint mousePoint) {
-        // Строка состояния удалена по требованию интерфейса.
-    }
 
     private void showErrorMessage(String messageText) {
         JOptionPane.showMessageDialog(this, messageText, "Ошибка", JOptionPane.ERROR_MESSAGE);
