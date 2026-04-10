@@ -100,10 +100,77 @@ public class MainFrame extends JFrame {
             return;
         }
         try {
-            applyProjectData(TextDataParser.parseText(inputArea.getText()));
+            ProjectData parsedData = TextDataParser.parseText(inputArea.getText());
+            showOutsideFieldWarnings(parsedData);
+            applyProjectData(parsedData);
         } catch (IllegalArgumentException exception) {
             showErrorMessage(exception.getMessage());
         }
+    }
+
+    private void showOutsideFieldWarnings(ProjectData loadedProjectData) {
+        int outsidePointCount = countOutsidePoints(loadedProjectData.getPointArray());
+        int outsideCircleCount = countFullyOutsideCircles(loadedProjectData.getCircleArray());
+        if (outsidePointCount == 0 && outsideCircleCount == 0) {
+            return;
+        }
+        JOptionPane.showMessageDialog(
+                this,
+                buildOutsideWarningText(outsidePointCount, outsideCircleCount),
+                "Предупреждение",
+                JOptionPane.WARNING_MESSAGE);
+    }
+
+    private int countOutsidePoints(PlanePoint[] pointArray) {
+        int outsidePointCount = 0;
+        for (int i = 0; i < pointArray.length; i++) {
+            if (isPointOutsideField(pointArray[i])) {
+                outsidePointCount++;
+            }
+        }
+        return outsidePointCount;
+    }
+
+    private int countFullyOutsideCircles(PlaneCircle[] circleArray) {
+        int outsideCircleCount = 0;
+        for (int i = 0; i < circleArray.length; i++) {
+            if (isCircleFullyOutsideField(circleArray[i])) {
+                outsideCircleCount++;
+            }
+        }
+        return outsideCircleCount;
+    }
+
+    private boolean isPointOutsideField(PlanePoint pointData) {
+        double halfWidth = drawingPanel.getWidth() / 2.0;
+        double halfHeight = drawingPanel.getHeight() / 2.0;
+        return pointData.getXCoordinate() < -halfWidth
+                || pointData.getXCoordinate() > halfWidth
+                || pointData.getYCoordinate() < -halfHeight
+                || pointData.getYCoordinate() > halfHeight;
+    }
+
+    private boolean isCircleFullyOutsideField(PlaneCircle circleData) {
+        double halfWidth = drawingPanel.getWidth() / 2.0;
+        double halfHeight = drawingPanel.getHeight() / 2.0;
+        double centerX = circleData.getCenterPoint().getXCoordinate();
+        double centerY = circleData.getCenterPoint().getYCoordinate();
+        double radiusValue = circleData.getRadiusValue();
+        return centerX + radiusValue < -halfWidth
+                || centerX - radiusValue > halfWidth
+                || centerY + radiusValue < -halfHeight
+                || centerY - radiusValue > halfHeight;
+    }
+
+    private String buildOutsideWarningText(int outsidePointCount, int outsideCircleCount) {
+        StringBuilder warningText = new StringBuilder();
+        if (outsidePointCount > 0) {
+            warningText.append("Точек вне текущего поля: ").append(outsidePointCount).append(".\n");
+        }
+        if (outsideCircleCount > 0) {
+            warningText.append("Кругов полностью вне текущего поля: ").append(outsideCircleCount).append(".");
+        }
+        return warningText.toString().trim();
     }
 
     private String createInputTemplate() {
