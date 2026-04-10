@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class ProjectData {
     private PlanePoint[] pointArray = new PlanePoint[8];
     private PlaneCircle[] circleArray = new PlaneCircle[8];
@@ -16,27 +18,12 @@ public class ProjectData {
         circleCount++;
     }
 
-    public void clearAllData() {
-        pointArray = new PlanePoint[8];
-        circleArray = new PlaneCircle[8];
-        pointCount = 0;
-        circleCount = 0;
-    }
-
     public PlanePoint[] getPointArray() {
-        PlanePoint[] copyArray = new PlanePoint[pointCount];
-        for (int i = 0; i < pointCount; i++) {
-            copyArray[i] = pointArray[i];
-        }
-        return copyArray;
+        return Arrays.copyOf(pointArray, pointCount);
     }
 
     public PlaneCircle[] getCircleArray() {
-        PlaneCircle[] copyArray = new PlaneCircle[circleCount];
-        for (int i = 0; i < circleCount; i++) {
-            copyArray[i] = circleArray[i];
-        }
-        return copyArray;
+        return Arrays.copyOf(circleArray, circleCount);
     }
 
     public int getPointCount() {
@@ -62,18 +49,10 @@ public class ProjectData {
     }
 
     private PlanePoint[] growPointArray() {
-        PlanePoint[] newArray = new PlanePoint[pointArray.length * 2];
-        for (int i = 0; i < pointArray.length; i++) {
-            newArray[i] = pointArray[i];
-        }
-        return newArray;
+        return Arrays.copyOf(pointArray, pointArray.length * 2);
     }
 
     private PlaneCircle[] growCircleArray() {
-        PlaneCircle[] newArray = new PlaneCircle[circleArray.length * 2];
-        for (int i = 0; i < circleArray.length; i++) {
-            newArray[i] = circleArray[i];
-        }
-        return newArray;
+        return Arrays.copyOf(circleArray, circleArray.length * 2);
     }
 }
