@@ -2,6 +2,7 @@ public class TriangleSearcher {
     public static TriangleSearchResult findBestTriangle(ProjectData projectData) {
         TriangleSearchResult bestResult = TriangleSearchResult.emptyResult();
         PlanePoint[] pointArray = projectData.getPointArray();
+        PlaneCircle[] circleArray = projectData.getCircleArray();
         for (int firstIndex = 0; firstIndex < pointArray.length - 2; firstIndex++) {
             for (int secondIndex = firstIndex + 1; secondIndex < pointArray.length - 1; secondIndex++) {
                 for (int thirdIndex = secondIndex + 1; thirdIndex < pointArray.length; thirdIndex++) {
@@ -9,7 +10,7 @@ public class TriangleSearcher {
                             pointArray[firstIndex],
                             pointArray[secondIndex],
                             pointArray[thirdIndex]);
-                    bestResult = chooseBetterResult(bestResult, currentTriangle, projectData);
+                    bestResult = chooseBetterResult(bestResult, currentTriangle, circleArray);
                 }
             }
         }
@@ -19,13 +20,11 @@ public class TriangleSearcher {
     private static TriangleSearchResult chooseBetterResult(
             TriangleSearchResult currentBestResult,
             TriangleData candidateTriangle,
-            ProjectData projectData) {
+            PlaneCircle[] circleArray) {
         if (GeometryUtils.isDegenerateTriangle(candidateTriangle)) {
             return currentBestResult;
         }
-        int outsideCircleCount = GeometryUtils.countOutsideCircles(
-                candidateTriangle,
-                projectData.getCircleArray());
+        int outsideCircleCount = GeometryUtils.countOutsideCircles(candidateTriangle, circleArray);
         TriangleSearchResult candidateResult = new TriangleSearchResult(
                 candidateTriangle,
                 outsideCircleCount);
