@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class MainFrame extends JFrame {
-    // Главная панель рисования: хранит логику мыши и визуализацию данных.
-    private final DrawingPanel drawingPanel;
     // Текущие данные проекта (точки и круги).
     private ProjectData projectData = new ProjectData();
+    // Главная панель рисования: хранит логику мыши и визуализацию данных.
+    private final DrawingPanel drawingPanel = new DrawingPanel(this, projectData);;
     // Последний найденный результат поиска треугольника.
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
 
@@ -16,7 +16,6 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(120, 80, 1100, 750);
         setLayout(new BorderLayout());
-        drawingPanel = new DrawingPanel(this, projectData);
         add(drawingPanel, BorderLayout.CENTER);
         setJMenuBar(createMenuBar());
         setVisible(true);
@@ -81,7 +80,7 @@ public class MainFrame extends JFrame {
     }
 
     private JFileChooser createFileChooser(String dialogTitle) {
-        JFileChooser fileChooser = new JFileChooser(".");
+        JFileChooser fileChooser = new JFileChooser("./data");
         fileChooser.setDialogTitle(dialogTitle);
         return fileChooser;
     }
