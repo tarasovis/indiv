@@ -1,19 +1,22 @@
 import java.util.Arrays;
 
 public class ProjectData {
-    private PlanePoint[] pointArray = new PlanePoint[8];
-    private PlaneCircle[] circleArray = new PlaneCircle[8];
+    private static final int MAX_POINT_COUNT = 1000;
+    private static final int MAX_CIRCLE_COUNT = 1000;
+
+    private final PlanePoint[] pointArray = new PlanePoint[MAX_POINT_COUNT];
+    private final PlaneCircle[] circleArray = new PlaneCircle[MAX_CIRCLE_COUNT];
     private int pointCount;
     private int circleCount;
 
     public void addPoint(PlanePoint pointData) {
-        ensurePointCapacity(pointCount + 1);
+        validatePointLimit();
         pointArray[pointCount] = pointData;
         pointCount++;
     }
 
     public void addCircle(PlaneCircle circleData) {
-        ensureCircleCapacity(circleCount + 1);
+        validateCircleLimit();
         circleArray[circleCount] = circleData;
         circleCount++;
     }
@@ -34,25 +37,15 @@ public class ProjectData {
         return circleCount;
     }
 
-    private void ensurePointCapacity(int neededCapacity) {
-        if (neededCapacity <= pointArray.length) {
-            return;
+    private void validatePointLimit() {
+        if (pointCount >= MAX_POINT_COUNT) {
+            throw new IllegalStateException("Point limit is 1000.");
         }
-        pointArray = growPointArray();
     }
 
-    private void ensureCircleCapacity(int neededCapacity) {
-        if (neededCapacity <= circleArray.length) {
-            return;
+    private void validateCircleLimit() {
+        if (circleCount >= MAX_CIRCLE_COUNT) {
+            throw new IllegalStateException("Circle limit is 1000.");
         }
-        circleArray = growCircleArray();
-    }
-
-    private PlanePoint[] growPointArray() {
-        return Arrays.copyOf(pointArray, pointArray.length * 2);
-    }
-
-    private PlaneCircle[] growCircleArray() {
-        return Arrays.copyOf(circleArray, circleArray.length * 2);
     }
 }
