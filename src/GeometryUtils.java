@@ -1,12 +1,12 @@
 /**
  * В этом классе собраны геометрические вычисления:
- * расстояния, площадь, проверки пересечений и критерий "круг снаружи треугольника".
+ * расстояния, площадь, проверки пересечений и критерий "круг снаружи треугольника"
  */
 public class GeometryUtils {
     private static final double EPSILON = 1e-7;
 
     /**
-     * Возвращает расстояние между двумя точками.
+     * Возвращает расстояние между двумя точками
      */
     public static double distanceBetween(PlanePoint firstPoint, PlanePoint secondPoint) {
         double dxValue = firstPoint.getXCoordinate() - secondPoint.getXCoordinate();
@@ -15,7 +15,7 @@ public class GeometryUtils {
     }
 
     /**
-     * Вычисляет площадь треугольника.
+     * Вычисляет площадь треугольника
      */
     public static double triangleAreaValue(TriangleData triangleData) {
         return Math.abs(signedDoubleArea(
@@ -25,14 +25,14 @@ public class GeometryUtils {
     }
 
     /**
-     * Проверяет, является ли треугольник вырожденным.
+     * Проверяет, является ли треугольник вырожденным
      */
     public static boolean isDegenerateTriangle(TriangleData triangleData) {
         return triangleAreaValue(triangleData) <= EPSILON;
     }
 
     /**
-     * Подсчитывает, сколько кругов полностью лежат снаружи заданного треугольника.
+     * Подсчитывает, сколько кругов полностью лежат снаружи заданного треугольника
      */
     public static int countOutsideCircles(
             TriangleData triangleData,
@@ -47,7 +47,7 @@ public class GeometryUtils {
     }
 
     /**
-     * Возвращает true, если круг и треугольник не имеют общих точек.
+     * Возвращает true, если круг и треугольник не имеют общих точек
      */
     public static boolean isCircleOutsideTriangle(
             TriangleData triangleData,
@@ -94,7 +94,7 @@ public class GeometryUtils {
     }
 
     /**
-     * Проверяет принадлежность точки треугольнику (включая границы) через знаки ориентированных площадей.
+     * Проверяет принадлежность точки треугольнику (включая границы) через знаки ориентированных площадей
      */
     public static boolean isPointInsideOrOnTriangle(
             PlanePoint pointData,
@@ -135,8 +135,8 @@ public class GeometryUtils {
     }
 
     /**
-     * Возвращает кратчайшее расстояние от точки до отрезка.
-     * Если отрезок вырожден в точку, используется обычное расстояние до этой точки.
+     * Возвращает кратчайшее расстояние от точки до отрезка
+     * Если отрезок вырожден в точку, используется обычное расстояние до этой точки
      */
     private static double distanceFromPointToSegment(
             PlanePoint pointData,

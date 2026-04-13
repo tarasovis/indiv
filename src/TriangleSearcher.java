@@ -39,8 +39,7 @@ public class TriangleSearcher {
     }
 
     /**
-     * Сравнивает два результата по приоритетам задачи:
-     * сначала число внешних кругов, затем периметр.
+     * Сравнивает два результата по приоритетам задачи: сначала число внешних кругов, затем периметр
      */
     private static boolean isCandidateBetter(
             TriangleSearchResult currentBestResult,
