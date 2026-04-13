@@ -1,5 +1,5 @@
 /**
- * Модель круга: центр и радиус.
+ * Модель круга: центр и радиус
  */
 public class PlaneCircle {
     private final PlanePoint centerPoint;

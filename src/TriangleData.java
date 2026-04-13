@@ -1,5 +1,5 @@
 /**
- * Модель треугольника как тройки вершин.
+ * Модель треугольника как тройки вершин
  */
 public class TriangleData {
     private final PlanePoint firstVertex;
@@ -28,7 +28,7 @@ public class TriangleData {
     }
 
     /**
-     * Возвращает периметр треугольника.
+     * Возвращает периметр треугольника
      */
     public double getPerimeterValue() {
         double firstSideLength = GeometryUtils.distanceBetween(firstVertex, secondVertex);

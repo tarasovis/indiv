@@ -5,14 +5,11 @@ import java.util.Locale;
 import java.util.Scanner;
 
 /**
- * Менеджер чтения и записи данных проекта в текстовый файл.
- * <p>
- * Работает в паре с {@link TextDataParser}: этот класс отвечает за I/O,
- * а парсер отвечает за разбор формата.
+ * Отвечает за чтение и запись данных проекта в текстовый файл, работает в паре с TextDataParser
  */
 public class DataFileManager {
     /**
-     * Читает файл и возвращает распарсенные данные проекта.
+     * Читает файл и возвращает распарсенные данные проекта
      */
     public static ProjectData loadFromFile(File sourceFile) throws FileNotFoundException {
         Scanner fileScanner = new Scanner(sourceFile);
@@ -23,7 +20,7 @@ public class DataFileManager {
     }
 
     /**
-     * Сохраняет текущие точки и круги в текстовый файл.
+     * Сохраняет текущие точки и круги в текстовый файл
      */
     public static void saveToFile(File targetFile, ProjectData projectData)
             throws FileNotFoundException {

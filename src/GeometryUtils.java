@@ -1,14 +1,12 @@
 /**
- * Набор статических геометрических операций.
- * <p>
- * Здесь собраны все вычисления, чтобы UI-классы оставались простыми:
+ * В этом классе собраны геометрические вычисления:
  * расстояния, площадь, проверки пересечений и критерий "круг снаружи треугольника".
  */
 public class GeometryUtils {
     private static final double EPSILON = 1e-7;
 
     /**
-     * Возвращает евклидово расстояние между двумя точками.
+     * Возвращает расстояние между двумя точками.
      */
     public static double distanceBetween(PlanePoint firstPoint, PlanePoint secondPoint) {
         double dxValue = firstPoint.getXCoordinate() - secondPoint.getXCoordinate();

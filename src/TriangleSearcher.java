@@ -1,9 +1,9 @@
 /**
- * Перебор всех треугольников по набору точек и выбор лучшего по условию задачи.
+ * Перебор всех треугольников по набору точек и выбор лучшего по условию задачи
  */
 public class TriangleSearcher {
     /**
-     * Перебирает все треугольники по точкам и выбирает лучший по условию задачи.
+     * Собственно перебор треугольников
      */
     public static TriangleSearchResult findBestTriangle(ProjectData projectData) {
         TriangleSearchResult bestResult = TriangleSearchResult.emptyResult();

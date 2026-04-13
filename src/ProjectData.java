@@ -1,10 +1,7 @@
 import java.util.Arrays;
 
 /**
- * Контейнер входных данных задачи: набор точек и набор кругов.
- * <p>
- * Реализован на фиксированных массивах, чтобы код оставался простым
- * и максимально прозрачным для учебного проекта.
+ * Контейнер входных данных задачи: набор точек и набор кругов
  */
 public class ProjectData {
     private static final int MAX_POINT_COUNT = 1000;
@@ -16,7 +13,7 @@ public class ProjectData {
     private int circleCount;
 
     /**
-     * Добавляет точку в контейнер данных.
+     * Добавляет точку в контейнер данных
      */
     public void addPoint(PlanePoint pointData) {
         validatePointLimit();
@@ -25,7 +22,7 @@ public class ProjectData {
     }
 
     /**
-     * Добавляет круг в контейнер данных.
+     * Добавляет круг в контейнер данных
      */
     public void addCircle(PlaneCircle circleData) {
         validateCircleLimit();

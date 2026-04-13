@@ -2,14 +2,12 @@ import java.util.Locale;
 import java.util.Scanner;
 
 /**
- * Разбор текстового представления данных проекта.
- * <p>
- * Поддерживаемый формат:
- * POINTS N, затем N пар координат; CIRCLES M, затем M троек (cx cy r).
+ * Разбор текстового представления данных проекта
+ * формат: POINTS N, затем N пар координат; CIRCLES M, затем M троек (cx cy r).
  */
 public class TextDataParser {
     /**
-     * Парсит данные из произвольного текста.
+     * Парсит данные из произвольного текста
      */
     public static ProjectData parseText(String sourceText) {
         Scanner textScanner = new Scanner(sourceText);

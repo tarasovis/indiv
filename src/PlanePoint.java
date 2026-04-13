@@ -1,5 +1,5 @@
 /**
- * Точка на плоскости в декартовых координатах.
+ * Точка на плоскости в декартовых координатах
  */
 public class PlanePoint {
     private final double xCoordinate;

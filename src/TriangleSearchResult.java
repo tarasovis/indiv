@@ -1,6 +1,5 @@
 /**
- * Результат работы алгоритма поиска:
- * найденный треугольник и число кругов, лежащих снаружи него.
+ * Результат работы алгоритма поиска: найденный треугольник и число кругов, лежащих снаружи него
  */
 public class TriangleSearchResult {
     private final TriangleData triangleData;
@@ -12,14 +11,14 @@ public class TriangleSearchResult {
     }
 
     /**
-     * Возвращает специальный пустой результат, когда треугольник еще не найден.
+     * Возвращает специальный пустой результат, когда треугольник еще не найден
      */
     public static TriangleSearchResult emptyResult() {
         return new TriangleSearchResult(null, -1);
     }
 
     /**
-     * Проверяет, содержит ли результат найденный треугольник.
+     * Проверяет, содержит ли результат найденный треугольник
      */
     public boolean hasTriangle() {
         return triangleData != null;
@@ -34,7 +33,7 @@ public class TriangleSearchResult {
     }
 
     /**
-     * Возвращает периметр найденного треугольника или 0.0 для пустого результата.
+     * Возвращает периметр найденного треугольника или 0.0 для пустого результата
      */
     public double getPerimeterValue() {
         if (!hasTriangle()) {

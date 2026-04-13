@@ -5,10 +5,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 /**
- * Панель рисования.
- * <p>
- * Отвечает за визуализацию данных и ввод мышью:
- * левая кнопка добавляет точки, правая кнопка в два шага создает круг.
+ * Панель рисования, отвечает за визуализацию данных и ввод мышью:
+ * левая кнопка добавляет точки, правая кнопка в два шага создает круг
  */
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener {
     // Константы оформления (единый стиль отрисовки).
@@ -178,7 +176,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     /**
-     * Двухшаговое добавление круга: первый клик задает центр, второй фиксирует радиус.
+     * Двухшаговое добавление круга: первый клик задает центр, второй фиксирует радиус
      */
     private void processCircleClick(PlanePoint clickedPoint) {
         if (previewCircleCenter == null) {
@@ -210,7 +208,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     }
 
     /**
-     * Обновляет радиус временного круга во время движения мыши.
+     * Обновляет радиус временного круга во время движения мыши
      */
     private void updateMouseData(MouseEvent mouseEvent) {
         PlanePoint mousePoint = toPlanePoint(mouseEvent.getPoint());

@@ -4,22 +4,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
- * Главное окно приложения.
- * <p>
+ * Главное окно приложения
  * Отвечает за:
- * <ul>
- *   <li>меню и команды пользователя;</li>
- *   <li>диалоги загрузки/сохранения/ввода;</li>
- *   <li>связь между данными проекта, панелью рисования и результатом поиска.</li>
- * </ul>
+ *   меню и команды пользователя
+ *   диалоги загрузки/сохранения/ввода
+ *   связь между данными проекта, панелью рисования и результатом поиска
  */
 public class MainFrame extends JFrame {
     private ProjectData projectData = new ProjectData();
-    private final DrawingPanel drawingPanel = new DrawingPanel(this, projectData);;
+    private final DrawingPanel drawingPanel = new DrawingPanel(this, projectData);
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
 
     public MainFrame() {
-        super("Типовой проект: точки, круги и лучший треугольник");
+        super("Нахождение треугольника с максимальным количеством внешних кругов и максимальным периметром\n");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(120, 80, 1100, 750);
         setLayout(new BorderLayout());
@@ -29,7 +26,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Собирает главное меню окна.
+     * Собирает главное меню окна
      */
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -64,7 +61,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Загружает данные из выбранного пользователем файла и применяет их к проекту.
+     * Загружает данные из выбранного пользователем файла и применяет их к проекту
      */
     private void openDataFile() {
         JFileChooser fileChooser = createFileChooser("Выберите файл с данными");
@@ -79,7 +76,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Сохраняет текущее состояние проекта в файл.
+     * Сохраняет текущее состояние проекта в файл
      */
     private void saveDataFile() {
         JFileChooser fileChooser = createFileChooser("Укажите файл для сохранения");
@@ -218,7 +215,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Запускает перебор треугольников и обновляет отображение результата.
+     * Запускает перебор треугольников и обновляет отображение результата
      */
     private void findBestTriangle() {
         if (projectData.getPointCount() < 3) {
