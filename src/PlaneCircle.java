@@ -1,7 +1,13 @@
+/**
+ * Модель круга: центр и радиус.
+ */
 public class PlaneCircle {
     private final PlanePoint centerPoint;
     private final double radiusValue;
 
+    /**
+     * Создает круг и валидирует неотрицательность радиуса.
+     */
     public PlaneCircle(PlanePoint centerPoint, double radiusValue) {
         validateRadius(radiusValue);
         this.centerPoint = centerPoint;

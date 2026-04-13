@@ -1,12 +1,24 @@
+/**
+ * Набор статических геометрических операций.
+ * <p>
+ * Здесь собраны все вычисления, чтобы UI-классы оставались простыми:
+ * расстояния, площадь, проверки пересечений и критерий "круг снаружи треугольника".
+ */
 public class GeometryUtils {
     private static final double EPSILON = 1e-7;
 
+    /**
+     * Возвращает евклидово расстояние между двумя точками.
+     */
     public static double distanceBetween(PlanePoint firstPoint, PlanePoint secondPoint) {
         double dxValue = firstPoint.getXCoordinate() - secondPoint.getXCoordinate();
         double dyValue = firstPoint.getYCoordinate() - secondPoint.getYCoordinate();
         return Math.hypot(dxValue, dyValue);
     }
 
+    /**
+     * Вычисляет площадь треугольника.
+     */
     public static double triangleAreaValue(TriangleData triangleData) {
         return Math.abs(signedDoubleArea(
                 triangleData.getFirstVertex(),
@@ -14,6 +26,9 @@ public class GeometryUtils {
                 triangleData.getThirdVertex())) / 2.0;
     }
 
+    /**
+     * Проверяет, является ли треугольник вырожденным.
+     */
     public static boolean isDegenerateTriangle(TriangleData triangleData) {
         return triangleAreaValue(triangleData) <= EPSILON;
     }
@@ -30,6 +45,9 @@ public class GeometryUtils {
         return outsideCircleCount;
     }
 
+    /**
+     * Возвращает true, если круг и треугольник не имеют общих точек.
+     */
     public static boolean isCircleOutsideTriangle(
             TriangleData triangleData,
             PlaneCircle circleData) {
