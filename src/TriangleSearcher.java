@@ -38,6 +38,10 @@ public class TriangleSearcher {
                 ? candidateResult : currentBestResult;
     }
 
+    /**
+     * Сравнивает два результата по приоритетам задачи:
+     * сначала число внешних кругов, затем периметр.
+     */
     private static boolean isCandidateBetter(
             TriangleSearchResult currentBestResult,
             TriangleSearchResult candidateResult) {

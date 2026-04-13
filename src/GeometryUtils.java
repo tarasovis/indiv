@@ -31,6 +31,9 @@ public class GeometryUtils {
         return triangleAreaValue(triangleData) <= EPSILON;
     }
 
+    /**
+     * Подсчитывает, сколько кругов полностью лежат снаружи заданного треугольника.
+     */
     public static int countOutsideCircles(
             TriangleData triangleData,
             PlaneCircle[] circleArray) {
@@ -90,6 +93,9 @@ public class GeometryUtils {
                 <= circleData.getRadiusValue() + EPSILON;
     }
 
+    /**
+     * Проверяет принадлежность точки треугольнику (включая границы) через знаки ориентированных площадей.
+     */
     public static boolean isPointInsideOrOnTriangle(
             PlanePoint pointData,
             TriangleData triangleData) {
@@ -128,6 +134,10 @@ public class GeometryUtils {
         return distanceToSegment <= circleData.getRadiusValue() + EPSILON;
     }
 
+    /**
+     * Возвращает кратчайшее расстояние от точки до отрезка.
+     * Если отрезок вырожден в точку, используется обычное расстояние до этой точки.
+     */
     private static double distanceFromPointToSegment(
             PlanePoint pointData,
             PlanePoint segmentStart,
