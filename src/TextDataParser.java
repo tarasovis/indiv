@@ -1,9 +1,17 @@
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * Разбор текстового представления данных проекта.
+ * <p>
+ * Поддерживаемый формат:
+ * POINTS N, затем N пар координат; CIRCLES M, затем M троек (cx cy r).
+ */
 public class TextDataParser {
+    /**
+     * Парсит данные из произвольного текста.
+     */
     public static ProjectData parseText(String sourceText) {
-        // Поддерживаем десятичную точку независимо от локали ОС.
         Scanner textScanner = new Scanner(sourceText);
         textScanner.useLocale(Locale.US);
         ProjectData projectData = parseScanner(textScanner);
@@ -11,8 +19,10 @@ public class TextDataParser {
         return projectData;
     }
 
+    /**
+     * Парсит данные из Scanner в формате: POINTS ... CIRCLES ...
+     */
     public static ProjectData parseScanner(Scanner textScanner) {
-        // Формат ввода: блок POINTS, затем блок CIRCLES.
         ProjectData projectData = new ProjectData();
         readKeyword(textScanner, "POINTS");
         readPointList(textScanner, projectData);
@@ -22,7 +32,6 @@ public class TextDataParser {
     }
 
     private static void readPointList(Scanner textScanner, ProjectData projectData) {
-        // Последовательно читаем координаты каждой точки.
         int pointCount = readNonNegativeInt(textScanner, "количество точек");
         for (int pointIndex = 0; pointIndex < pointCount; pointIndex++) {
             double xCoordinate = readDoubleValue(textScanner, "x точки");
@@ -32,7 +41,6 @@ public class TextDataParser {
     }
 
     private static void readCircleList(Scanner textScanner, ProjectData projectData) {
-        // Для каждого круга читаем центр и радиус.
         int circleCount = readNonNegativeInt(textScanner, "количество кругов");
         for (int circleIndex = 0; circleIndex < circleCount; circleIndex++) {
             double centerX = readDoubleValue(textScanner, "x центра круга");

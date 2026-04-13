@@ -4,7 +4,16 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * Менеджер чтения и записи данных проекта в текстовый файл.
+ * <p>
+ * Работает в паре с {@link TextDataParser}: этот класс отвечает за I/O,
+ * а парсер отвечает за разбор формата.
+ */
 public class DataFileManager {
+    /**
+     * Читает файл и возвращает распарсенные данные проекта.
+     */
     public static ProjectData loadFromFile(File sourceFile) throws FileNotFoundException {
         Scanner fileScanner = new Scanner(sourceFile);
         fileScanner.useLocale(Locale.US);
@@ -13,6 +22,9 @@ public class DataFileManager {
         return projectData;
     }
 
+    /**
+     * Сохраняет текущие точки и круги в текстовый файл.
+     */
     public static void saveToFile(File targetFile, ProjectData projectData)
             throws FileNotFoundException {
         PrintWriter fileWriter = new PrintWriter(targetFile);

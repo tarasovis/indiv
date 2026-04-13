@@ -1,5 +1,8 @@
+/**
+ * Результат работы алгоритма поиска:
+ * найденный треугольник и число кругов, лежащих снаружи него.
+ */
 public class TriangleSearchResult {
-    // Может быть null, если валидный треугольник не найден.
     private final TriangleData triangleData;
     private final int outsideCircleCount;
 
@@ -8,11 +11,16 @@ public class TriangleSearchResult {
         this.outsideCircleCount = outsideCircleCount;
     }
 
+    /**
+     * Возвращает специальный пустой результат, когда треугольник еще не найден.
+     */
     public static TriangleSearchResult emptyResult() {
-        // Специальное "пустое" значение для начального состояния.
         return new TriangleSearchResult(null, -1);
     }
 
+    /**
+     * Проверяет, содержит ли результат найденный треугольник.
+     */
     public boolean hasTriangle() {
         return triangleData != null;
     }
@@ -25,6 +33,9 @@ public class TriangleSearchResult {
         return outsideCircleCount;
     }
 
+    /**
+     * Возвращает периметр найденного треугольника или 0.0 для пустого результата.
+     */
     public double getPerimeterValue() {
         if (!hasTriangle()) {
             return 0.0;

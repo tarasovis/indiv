@@ -3,12 +3,19 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+/**
+ * Главное окно приложения.
+ * <p>
+ * Отвечает за:
+ * <ul>
+ *   <li>меню и команды пользователя;</li>
+ *   <li>диалоги загрузки/сохранения/ввода;</li>
+ *   <li>связь между данными проекта, панелью рисования и результатом поиска.</li>
+ * </ul>
+ */
 public class MainFrame extends JFrame {
-    // Текущие данные проекта (точки и круги).
     private ProjectData projectData = new ProjectData();
-    // Главная панель рисования: хранит логику мыши и визуализацию данных.
     private final DrawingPanel drawingPanel = new DrawingPanel(this, projectData);;
-    // Последний найденный результат поиска треугольника.
     private TriangleSearchResult searchResult = TriangleSearchResult.emptyResult();
 
     public MainFrame() {
@@ -21,8 +28,10 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Собирает главное меню окна.
+     */
     private JMenuBar createMenuBar() {
-        // Меню разбито на блоки "Файл" и "Действия" для простой навигации.
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createFileMenu());
         menuBar.add(createActionMenu());
@@ -49,12 +58,14 @@ public class MainFrame extends JFrame {
     }
 
     private JMenuItem createMenuItem(String itemText, Runnable action) {
-        // Универсальный фабричный метод для пунктов меню.
         JMenuItem menuItem = new JMenuItem(itemText);
         menuItem.addActionListener(actionEvent -> action.run());
         return menuItem;
     }
 
+    /**
+     * Загружает данные из выбранного пользователем файла и применяет их к проекту.
+     */
     private void openDataFile() {
         JFileChooser fileChooser = createFileChooser("Выберите файл с данными");
         if (fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
@@ -67,6 +78,9 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * Сохраняет текущее состояние проекта в файл.
+     */
     private void saveDataFile() {
         JFileChooser fileChooser = createFileChooser("Укажите файл для сохранения");
         if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
@@ -86,7 +100,6 @@ public class MainFrame extends JFrame {
     }
 
     private void readDataFromKeyboard() {
-        // Пользователь редактирует подготовленный шаблон и подтверждает ввод.
         JTextArea inputArea = new JTextArea(createInputTemplate(), 14, 40);
         JScrollPane scrollPane = new JScrollPane(inputArea);
         int dialogResult = JOptionPane.showConfirmDialog(
@@ -173,7 +186,6 @@ public class MainFrame extends JFrame {
     }
 
     private String createInputTemplate() {
-        // Шаблон формата: сначала POINTS, затем CIRCLES и соответствующие числа.
         return "POINTS 3\n"
                 + "-150 40\n"
                 + "40 140\n"
@@ -192,7 +204,6 @@ public class MainFrame extends JFrame {
     }
 
     private void clearProjectData() {
-        // Полная очистка: данные и выделенный треугольник сбрасываются вместе.
         projectData = new ProjectData();
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setProjectData(projectData);
@@ -200,15 +211,16 @@ public class MainFrame extends JFrame {
     }
 
     private void applyProjectData(ProjectData loadedProjectData) {
-        // При загрузке всегда сбрасываем старый результат поиска.
         projectData = loadedProjectData;
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setProjectData(projectData);
         drawingPanel.setSearchResult(searchResult);
     }
 
+    /**
+     * Запускает перебор треугольников и обновляет отображение результата.
+     */
     private void findBestTriangle() {
-        // Поиск запускается только если точек достаточно для построения треугольника.
         if (projectData.getPointCount() < 3) {
             showErrorMessage("Для поиска треугольника нужно минимум 3 точки.");
             return;
@@ -227,13 +239,11 @@ public class MainFrame extends JFrame {
     }
 
     private String buildResultText() {
-        // В диалоге выводим две требуемые характеристики результата.
         return "Снаружи кругов: " + searchResult.getOutsideCircleCount()
                 + "\nПериметр: " + String.format("%.2f", searchResult.getPerimeterValue());
     }
 
     public void notifyAboutDataChange() {
-        // Любое изменение входных данных делает старый результат неактуальным.
         searchResult = TriangleSearchResult.emptyResult();
         drawingPanel.setSearchResult(searchResult);
     }
