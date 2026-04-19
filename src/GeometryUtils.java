@@ -52,21 +52,10 @@ public class GeometryUtils {
     public static boolean isCircleOutsideTriangle(
             TriangleData triangleData,
             PlaneCircle circleData) {
-        if (isTriangleVertexInsideCircle(triangleData, circleData)) {
-            return false;
-        }
         if (isPointInsideOrOnTriangle(circleData.getCenterPoint(), triangleData)) {
             return false;
         }
         return !doesTriangleEdgeTouchCircle(triangleData, circleData);
-    }
-
-    private static boolean isTriangleVertexInsideCircle(
-            TriangleData triangleData,
-            PlaneCircle circleData) {
-        return isPointInsideOrOnCircle(triangleData.getFirstVertex(), circleData)
-                || isPointInsideOrOnCircle(triangleData.getSecondVertex(), circleData)
-                || isPointInsideOrOnCircle(triangleData.getThirdVertex(), circleData);
     }
 
     private static boolean doesTriangleEdgeTouchCircle(
@@ -84,13 +73,6 @@ public class GeometryUtils {
                 triangleData.getThirdVertex(),
                 triangleData.getFirstVertex(),
                 circleData);
-    }
-
-    private static boolean isPointInsideOrOnCircle(
-            PlanePoint pointData,
-            PlaneCircle circleData) {
-        return distanceBetween(pointData, circleData.getCenterPoint())
-                <= circleData.getRadiusValue() + EPSILON;
     }
 
     /**
